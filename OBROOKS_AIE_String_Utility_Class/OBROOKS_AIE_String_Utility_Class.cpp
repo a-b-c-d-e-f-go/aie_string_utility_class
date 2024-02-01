@@ -39,11 +39,26 @@ class String
             std::cout << CStr();
         }
     public:
-        bool operator==(const String& _other);
-        bool operator!=(const String& _other);
-        String& operator=(const String& _str);
-        char& operator[](size_t _index);
-        const char& operator[](size_t _index) const;
+        bool operator==(const String& _other)
+        {
+            return EqualTo(_other); //Equal.
+        }
+        bool operator!=(const String& _other)
+        {
+            return !(EqualTo(_other)); //Not equal.
+        }
+        String& operator=(const String& _str)
+        {
+            //return String(_str.CStr());
+        }
+        char& operator[](size_t _index)
+        {
+            return CharacterAt(_index); //Individual character.
+        }
+        const char& operator[](size_t _index) const
+        {
+            return CharacterAt(_index); //Individual character.
+        }
     private:
         /*
         * Put your internal data structures and members here
