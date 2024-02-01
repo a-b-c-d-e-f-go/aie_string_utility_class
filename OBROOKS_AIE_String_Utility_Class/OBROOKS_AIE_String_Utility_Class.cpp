@@ -12,10 +12,19 @@ class String
         String(const String& _other);
         ~String();
     public:
-        size_t Length() const;
+        size_t Length() const
+        {
+            return strlen(CStr()); //Length of the char array.
+        }
         char& CharacterAt(size_t _index);
-        const char& CharacterAt(size_t _index) const;
-        bool EqualTo(const String& _other) const;
+        const char& CharacterAt(size_t _index) const
+        {
+            return CStr()[_index]; //Array index in the char array.
+        }
+        bool EqualTo(const String& _other) const
+        {
+            return strcmp(CStr(), _other.CStr()) == 0; //If the strcmp of both string's char arrays is 0 (and therefore the char arrays have the same contents).
+        }
         String& Append(const String& _str);
         String& Prepend(const String& _str);
         const char* CStr() const;
@@ -25,7 +34,10 @@ class String
         size_t Find(size_t _startIndex, const String& _str);
         String& Replace(const String& _find, const String& _replace);
         String& ReadFromConsole();
-        String& WriteToConsole();
+        String& WriteToConsole()
+        {
+            std::cout << CStr();
+        }
     public:
         bool operator==(const String& _other);
         bool operator!=(const String& _other);
