@@ -6,12 +6,21 @@
 
 class String
 {
-    public:
-        String();
-        String(const char* _str);
-        String(const String& _other);
+    public: //External Constructors
+        String()
+        {
+            cstr = "";
+        }
+        String(const char* _str)
+        {
+            cstr = _str;
+        }
+        String(const String& _other)
+        {
+            cstr = _other.CStr();
+        }
         ~String();
-    public:
+    public: //External Functions
         size_t Length() const
         {
             return strlen(CStr()); //Length of the char array.
@@ -36,9 +45,9 @@ class String
         String& ReadFromConsole();
         String& WriteToConsole()
         {
-            std::cout << CStr();
+            std::cout << CStr(); //Writes the char array to the console.
         }
-    public:
+    public: //External Operators
         bool operator==(const String& _other)
         {
             return EqualTo(_other); //Equal.
@@ -49,7 +58,7 @@ class String
         }
         String& operator=(const String& _str)
         {
-            //return String(_str.CStr());
+            return (String&)String(_str); //Returns the String inputted as a String&.
         }
         char& operator[](size_t _index)
         {
@@ -59,10 +68,8 @@ class String
         {
             return CharacterAt(_index); //Individual character.
         }
-    private:
-        /*
-        * Put your internal data structures and members here
-        */
+    private: //Internal Variables
+        const char* cstr;
 };
 #endif
 
