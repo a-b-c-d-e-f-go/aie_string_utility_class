@@ -43,8 +43,40 @@ class String
         {
             return strcmp(CStr(), _other.CStr()) == 0; //If the strcmp of both string's char arrays is 0 (and therefore the char arrays have the same contents).
         }
-        String& Append(const String& _str);
-        String& Prepend(const String& _str);
+        String& Append(const String& _str)
+        {
+            const unsigned int size1 = sizeof(cstr) / sizeof(cstr[0]); //Size of the original cstring's array.
+            const unsigned int size2 = sizeof(_str.cstr) / sizeof(_str.cstr[0]); //Size of the added cstring's array.
+            char newstr[size1 + size2]; //Combined size because the strings will be joined.
+
+            unsigned int i = 0;
+            for (i = 0; i < size1; i++) //Original string.
+            {
+                newstr[i] = cstr[i];
+            }
+            for (unsigned int j = 0; j < size2; j++) //Appended string, continuing after the last one.
+            {
+                newstr[i + j] = _str.cstr[j];
+            }
+            return (String&)String(newstr);
+        }
+        String& Prepend(const String& _str)
+        {
+            const unsigned int size1 = sizeof(cstr) / sizeof(cstr[0]); //Size of the original cstring's array.
+            const unsigned int size2 = sizeof(_str.cstr) / sizeof(_str.cstr[0]); //Size of the added cstring's array.
+            char newstr[size2 + size1]; //Combined size because the strings will be joined.
+
+            unsigned int i = 0;
+            for (i = 0; i < size2; i++) //Prepended string, continuing after the last one.
+            {
+                newstr[i] = _str.cstr[i];
+            }
+            for (unsigned int j = 0; j < size1; j++) //Original string, continuing after the last one.
+            {
+                newstr[i + j] = cstr[j];
+            }
+            return (String&)String(newstr);
+        }
         const char* CStr() const
         {
             return cstr; //Returns internal variable. This way, it is encapsulated. Not sure why you would want to do this when there's an = operator that changes it anyway, but here you go.
