@@ -19,7 +19,11 @@ class String
         {
             cstr = _other.CStr();
         }
-        ~String();
+        ~String()
+        {
+            delete cstr;
+            cstr = nullptr;
+        }
     public: //External Functions
         size_t Length() const
         {
@@ -27,6 +31,8 @@ class String
         }
         char& CharacterAt(size_t _index)
         {
+            char null = 0; //Null character.
+            if (_index < 0 || _index > Length()) { return (char&)null; } //Return the null character if index is less than 0 or greater than the length.
             return (char&)CCharacterAt(_index); //Returns the CCharacterAt as a non-constant.
         }
         const char& CCharacterAt(size_t _index) const //Const version of CharacterAt, for all your const needs.
@@ -78,8 +84,13 @@ class String
         size_t Find(const String& _str);
         size_t Find(size_t _startIndex, const String& _str);
         String& Replace(const String& _find, const String& _replace);
-        String& ReadFromConsole();
-        String& WriteToConsole()
+        String& ReadFromConsole()
+        {
+            std::string newstr; //New std:string.
+            std::cin >> newstr; //Get std:string's contents from console input.
+            return (String&)String(newstr.c_str()); //Get the std:string's cstr and make a string out of it.
+        }
+        void WriteToConsole()
         {
             std::cout << CStr(); //Writes the char array to the console.
         }
