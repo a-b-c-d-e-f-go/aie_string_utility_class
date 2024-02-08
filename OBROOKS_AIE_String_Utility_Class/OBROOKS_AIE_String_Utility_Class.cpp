@@ -45,16 +45,16 @@ class String
         }
         String& Append(const String& _str)
         {
-            const unsigned int size1 = sizeof(cstr) / sizeof(cstr[0]); //Size of the original cstring's array.
-            const unsigned int size2 = sizeof(_str.cstr) / sizeof(_str.cstr[0]); //Size of the added cstring's array.
-            char newstr[size1 + size2]; //Combined size because the strings will be joined.
+            const size_t size1 = sizeof(cstr) / sizeof(cstr[0]); //Size of the original cstring's array.
+            const size_t size2 = sizeof(_str.cstr) / sizeof(_str.cstr[0]); //Size of the added cstring's array.
+            char newstr[size1 + size2] = ""; //Combined size because the strings will be joined.
 
-            unsigned int i = 0;
+            size_t i = 0;
             for (i = 0; i < size1; i++) //Original string.
             {
                 newstr[i] = cstr[i];
             }
-            for (unsigned int j = 0; j < size2; j++) //Appended string, continuing after the last one.
+            for (size_t j = 0; j < size2; j++) //Appended string, continuing after the last one.
             {
                 newstr[i + j] = _str.cstr[j];
             }
@@ -62,16 +62,16 @@ class String
         }
         String& Prepend(const String& _str)
         {
-            const unsigned int size1 = sizeof(cstr) / sizeof(cstr[0]); //Size of the original cstring's array.
-            const unsigned int size2 = sizeof(_str.cstr) / sizeof(_str.cstr[0]); //Size of the added cstring's array.
-            char newstr[size2 + size1]; //Combined size because the strings will be joined.
+            const size_t size1 = sizeof(cstr) / sizeof(cstr[0]); //Size of the original cstring's array.
+            const size_t size2 = sizeof(_str.cstr) / sizeof(_str.cstr[0]); //Size of the added cstring's array.
+            char newstr[size2 + size1] = ""; //Combined size because the strings will be joined.
 
-            unsigned int i = 0;
+            size_t i = 0;
             for (i = 0; i < size2; i++) //Prepended string, continuing after the last one.
             {
                 newstr[i] = _str.cstr[i];
             }
-            for (unsigned int j = 0; j < size1; j++) //Original string, continuing after the last one.
+            for (size_t j = 0; j < size1; j++) //Original string, continuing after the last one.
             {
                 newstr[i + j] = cstr[j];
             }
@@ -84,10 +84,10 @@ class String
         String& ToLower()
         {
             signed char offset = 'a' - 'A'; //Offset from capital to lowercase.
-            const unsigned int size = sizeof(cstr) / sizeof(cstr[0]); //Size of the original cstring's array.
+            const size_t size = sizeof(cstr) / sizeof(cstr[0]); //Size of the original cstring's array.
             char newstr[size] = ""; //New cstr that can be modified.
 
-            for (unsigned int i = 0; i < size; i++)
+            for (size_t i = 0; i < size; i++)
             {
                 newstr[i] = cstr[i]; //Transfer character to new cstr.
                 if (cstr[i] >= 'A' && cstr[i] <= 'Z') //If capital letter.
@@ -100,10 +100,10 @@ class String
         String& ToUpper()
         {
             signed char offset = 'A' - 'a'; //Offset from lowercase to capital.
-            const unsigned int size = sizeof(cstr) / sizeof(cstr[0]); //Size of the original cstring's array.
+            const size_t size = sizeof(cstr) / sizeof(cstr[0]); //Size of the original cstring's array.
             char newstr[size] = ""; //New cstr that can be modified.
 
-            for (unsigned int i = 0; i < size; i++)
+            for (size_t i = 0; i < size; i++)
             {
                 newstr[i] = cstr[i]; //Transfer character to new cstr.
                 if (cstr[i] >= 'a' && cstr[i] <= 'z') //If lowercase letter.
@@ -113,9 +113,42 @@ class String
             }
             return (String&)String(newstr);
         }
-        size_t Find(const String& _str);
-        size_t Find(size_t _startIndex, const String& _str);
-        String& Replace(const String& _find, const String& _replace);
+        size_t Find(const String& _str) //Find from the entire string.
+        {
+            return Find(0, _str); //Effectively the same as starting at zero.
+        }
+        size_t Find(size_t _startIndex, const String& _str)
+        {
+            const size_t size = sizeof(cstr) / sizeof(cstr[0]);
+            for (size_t i = _startIndex; i < size; i++)
+            {
+                if (RecursiveFind(_startIndex, i, _str)) //If the substring was found starting at i.
+                {
+                    return i; //Return the index of the substring.
+                }
+            }
+        }
+        bool RecursiveFind(size_t _startIndex, size_t _index, const String& _str)
+        {
+            if (_index > Length()) //If beyond the end of the string.
+            {
+                return false;
+            }
+            //If the character at i for the main string and i - _startIndex from the potential substring are the same.
+            else if (CCharacterAt(_index) == _str.CCharacterAt(_index - _startIndex)) //We subtract startIndex here because it is the starting value of i in Find().
+            {
+                if (_index - _startIndex == _str.Length()) { return true; } //At the end of the potential substring, end recursion.
+                else { return RecursiveFind(_startIndex, _index + 1, _str); } //Otherwise, continue recursion.
+            }
+            return false;
+        }
+        String& Replace(const String& _find, const String& _replace)
+        {
+            size_t find_start = Find(_find); //Get the index of the string to replace.
+            size_t find_end = find_start + _find.Length(); //Replaceable string end.
+            size_t size = (sizeof(cstr) / sizeof(cstr[0])) - _find.Length() + _replace.Length(); //Size if the returned string should be the original size minus the replaced string plus the replacing string.
+            //TODO:
+        }
         String& ReadFromConsole()
         {
             std::string newstr; //New std:string.
