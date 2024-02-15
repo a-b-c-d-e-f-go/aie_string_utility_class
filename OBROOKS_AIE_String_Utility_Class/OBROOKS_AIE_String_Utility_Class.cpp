@@ -1,4 +1,6 @@
 #include <iostream>
+#include <vector>
+#include <string>
 
 #pragma once
 #ifndef CUSTOM_STRING_HEADER
@@ -9,167 +11,175 @@ class String
 public: //External Constructors
     String() //No input.
     {
-        cstr = "";
+        SetVStr("", 1);
     }
-    String(const char* _str) //Input is another cstr.
+    String(const char* _str, size_t len) //Input is another cstr.
     {
-        cstr = _str;
+        SetVStr(_str, len);
     }
     String(const String& _other) //Input is another string.
     {
-        cstr = _other.CStr();
+        vstr = _other.vstr;
+    }
+    String(const std::vector<char> _str) //Input is a char vector.
+    {
+        vstr = _str;
     }
     ~String()
     {
-        delete cstr;
-        cstr = nullptr;
+        vstr.clear(); //Remove all elements.
+        vstr.shrink_to_fit(); //Free memory.
     }
 public: //External Functions
-    size_t Length() const
+    const size_t Length() const
     {
-        return strlen(CStr()); //Length of the char array.
+        return vstr.size();
     }
     char& CharacterAt(size_t _index)
     {
-        char null = 0; //Null character.
-        if (_index < 0 || _index > Length()) { return (char&)null; } //Return the null character if index is less than 0 or greater than the length.
         return (char&)CCharacterAt(_index); //Returns the CCharacterAt as a non-constant.
     }
-    const char& CCharacterAt(size_t _index) const //Const version of CharacterAt, for all your const needs.
+    const char& CCharacterAt(size_t _index) const //Const version of CharacterAt, for all your const needs. Really don't know why this was in the assignment template.
     {
+        //if (_index < 0 || _index >= Length()) { return nullptr; } //Return the null character if index is less than 0 or equal to the length.
         return CStr()[_index]; //Array index in the char array.
     }
     bool EqualTo(const String& _other) const
     {
-        return strcmp(CStr(), _other.CStr()) == 0; //If the strcmp of both string's char arrays is 0 (and therefore the char arrays have the same contents).
+        return (strcmp(CStr(), _other.CStr()) == 0); //If the strcmp of both string's char arrays is 0 (and therefore the char arrays have the same contents).
     }
-    String& Append(const String& _str)
+    String Append(const String& _str)
     {
-        const size_t size1 = sizeof(cstr) / sizeof(cstr[0]); //Size of the original cstring's array.
-        const size_t size2 = sizeof(_str.cstr) / sizeof(_str.cstr[0]); //Size of the added cstring's array.
-        char newstr[size1 + size2] = ""; //Combined size because the strings will be joined.
-
+        std::vector<char> newstr = {}; //Undefined size, can still be used as an array later.
         size_t i = 0;
-        for (i = 0; i < size1; i++) //Original string.
+        size_t j = 0;
+
+        while (vstr[i] != 0) //Original string. Loops until the null character.
         {
-            newstr[i] = cstr[i];
+            newstr.push_back(vstr[i]);
+            i++;
         }
-        for (size_t j = 0; j < size2; j++) //Appended string, continuing after the last one.
+        while (_str.vstr[j] != 0) //Appended string, continuing after the last one.
         {
-            newstr[i + j] = _str.cstr[j];
+            newstr.push_back(_str.vstr[j]);
+            j++;
         }
-        return (String&)String(newstr);
+        newstr.push_back(0); //Add null character.
+        return String(newstr);
     }
-    String& Prepend(const String& _str)
+    String Prepend(const String& _str)
     {
-        const size_t size1 = sizeof(cstr) / sizeof(cstr[0]); //Size of the original cstring's array.
-        const size_t size2 = sizeof(_str.cstr) / sizeof(_str.cstr[0]); //Size of the added cstring's array.
-        char newstr[size2 + size1] = ""; //Combined size because the strings will be joined.
-
+        std::vector<char> newstr = {}; //Undefined size, can still be used as an array later.
         size_t i = 0;
-        for (i = 0; i < size2; i++) //Prepended string, continuing after the last one.
+        size_t j = 0;
+
+        while (_str.vstr[i] != 0) //Prepended string. Loops until the null character.
         {
-            newstr[i] = _str.cstr[i];
+            newstr.push_back(_str.vstr[i]);
+            i++;
         }
-        for (size_t j = 0; j < size1; j++) //Original string, continuing after the last one.
+        while (vstr[j] != 0) //Original string, continuing after the last one.
         {
-            newstr[i + j] = cstr[j];
+            newstr.push_back(vstr[j]);
+            j++;
         }
-        return (String&)String(newstr);
+        newstr.push_back(0); //Add null character.
+        return String(newstr);
     }
     const char* CStr() const
     {
-        return cstr; //Returns internal variable. This way, it is encapsulated. Not sure why you would want to do this when there's an = operator that changes it anyway, but here you go.
+        return vstr.data(); //Returns internal variable. This way, it is encapsulated. Not sure why you would want to do this when there's an = operator that changes it anyway, but here you go.
     }
-    String& ToLower()
+    String ToLower()
     {
+        std::vector<char> newstr = vstr; //Copy of cstr.
         signed char offset = 'a' - 'A'; //Offset from capital to lowercase.
-        const size_t size = sizeof(cstr) / sizeof(cstr[0]); //Size of the original cstring's array.
-        char newstr[size] = ""; //New cstr that can be modified.
+        size_t i = 0;
 
-        for (size_t i = 0; i < size; i++)
+        while (vstr[i] != 0) //Loops until the null character.
         {
-            newstr[i] = cstr[i]; //Transfer character to new cstr.
-            if (cstr[i] >= 'A' && cstr[i] <= 'Z') //If capital letter.
+            if (vstr[i] >= 'A' && vstr[i] <= 'Z') //If capital letter.
             {
                 newstr[i] += offset; //Convert capital to lowercase.
             }
+            i++;
         }
-        return (String&)String(newstr);
+        return String(newstr);
     }
-    String& ToUpper()
+    String ToUpper()
     {
+        std::vector<char> newstr = vstr; //Copy of cstr.
         signed char offset = 'A' - 'a'; //Offset from lowercase to capital.
-        const size_t size = sizeof(cstr) / sizeof(cstr[0]); //Size of the original cstring's array.
-        char newstr[size] = ""; //New cstr that can be modified.
+        size_t i = 0;
 
-        for (size_t i = 0; i < size; i++)
+        while (vstr[i] != 0) //Loops until the null character.
         {
-            newstr[i] = cstr[i]; //Transfer character to new cstr.
-            if (cstr[i] >= 'a' && cstr[i] <= 'z') //If lowercase letter.
+            if (vstr[i] >= 'a' && vstr[i] <= 'z') //If lowercase letter.
             {
                 newstr[i] += offset; //Convert lowercase to capital.
             }
+            i++;
         }
-        return (String&)String(newstr);
+        return String(newstr);
     }
-    size_t Find(const String& _str) //Find from the entire string.
+    int Find(const String& _str) //Find from the entire string.
     {
         return Find(0, _str); //Effectively the same as starting at zero.
     }
-    size_t Find(size_t _startIndex, const String& _str)
+    int Find(size_t _startIndex, const String& _str)
     {
-        const size_t size = sizeof(cstr) / sizeof(cstr[0]);
-        for (size_t i = _startIndex; i < size; i++)
+        size_t i = _startIndex;
+        while (vstr[i] != 0) //Loops until the null character.
         {
-            if (RecursiveFind(_startIndex, i, _str)) //If the substring was found starting at i.
+            //std::cout << "i = " << i << "\n"; //Debug - displays i.
+            if (RecursiveFind(i, 0, _str)) //If the substring was found starting at i.
             {
-                return i; //Return the index of the substring.
+                return (int)i; //Return the index of the substring.
             }
+            i++;
         }
+        return -1;
     }
-    bool RecursiveFind(size_t _startIndex, size_t _index, const String& _str)
+    bool RecursiveFind(size_t _mainIndex, size_t _subIndex, const String& _str)
     {
-        if (_index > Length()) //If beyond the end of the string.
+        std::cout << _mainIndex << ": Is " << CCharacterAt(_mainIndex) << " equal to " << _str.CCharacterAt(_subIndex) << "?\n"; //Debug - displays what the recursive function is searching for.
+        if (CCharacterAt(_mainIndex) == _str.CCharacterAt(_subIndex)) //If the character at _mainIndex for the main string and _subIndex for the potential substring are the same.
         {
-            return false;
-        }
-        //If the character at i for the main string and i - _startIndex from the potential substring are the same.
-        else if (CCharacterAt(_index) == _str.CCharacterAt(_index - _startIndex)) //We subtract startIndex here because it is the starting value of i in Find().
-        {
-            if (_index - _startIndex == _str.Length()) { return true; } //At the end of the potential substring, end recursion.
-            else { return RecursiveFind(_startIndex, _index + 1, _str); } //Otherwise, continue recursion.
+            std::cout << "Yes\n";
+            if (_subIndex >= _str.Length() - 2) { return true; } //If t the end of the potential substring, return true.
+            else if (_mainIndex >= Length() - 1) { return false; } //If at the end of the main string and not the potential substring, return false.
+            else { return RecursiveFind(_mainIndex + 1, _subIndex + 1, _str); } //Otherwise, continue recursion and iterate both variables.
         }
         return false;
     }
-    String& Replace(const String& _find, const String& _replace)
+    String Replace(const String& _find, const String& _replace)
     {
         size_t find_start = Find(_find); //Get the index of the substring to replace.
         size_t find_end = find_start + _find.Length(); //Replaceable substring end.
 
-        const size_t length_offset = (sizeof(_replace.cstr) / sizeof(_replace.cstr[0])) - (sizeof(_find.cstr) / sizeof(_find.cstr[0])); //The size of the replacing substring minus the size of the replaced substring (how much longer/shorter the returned string will be)
-        const size_t size = ((sizeof(cstr) / sizeof(cstr[0])) + length_offset); //The size of the original string plus the length offset.
-        char newstr[size] = ""; //New cstr that can be modified.
+        const size_t length_offset = vstr.size() - _find.vstr.size(); //The size of the replacing substring minus the size of the replaced substring (how much longer/shorter the returned string will be)
+        const size_t size = vstr.size() + length_offset; //The size of the original string plus the length offset.
+        std::vector<char> newstr = {}; //New cstr that can be modified.
 
         for (size_t i = 0; i < find_start; i++) //Replicate the string as normal up until the replaced portion.
         {
-            newstr[i] = cstr[i]; //Transfer character to new cstr.
+            newstr.push_back(vstr[i]); //Transfer character to new cstr.
         }
         for (size_t i = find_start; i < (find_end + length_offset); i++) //For the length of the replacing substring, add its characters until complete.
         {
-            newstr[i] = _replace.cstr[i - find_start]; //Transfer character to new cstr.
-        }
+            newstr.push_back(_replace.vstr[i - find_start]); //Transfer character to new cstr. CAUSES ERROR
+        }/*
         for (size_t i = (find_end + length_offset); i < size; i++) //Finally, replicate the original string as normal afterwards, skipping the replaced substring.
         {
-            newstr[i] = cstr[i - length_offset]; //Transfer character to new cstr.
-        }
-        return (String&)String(newstr);
+            newstr.push_back(vstr[i - length_offset]); //Transfer character to new cstr.
+        }*/
+        return String(newstr);
     }
-    String& ReadFromConsole()
+    static String ReadFromConsole()
     {
         std::string newstr; //New std:string.
-        std::cin >> newstr; //Get std:string's contents from console input.
-        return (String&)String(newstr.c_str()); //Get the std:string's cstr and make a string out of it.
+        std::getline(std::cin, newstr); //Get std:string's contents from console input.
+        return String(newstr.c_str(), newstr.length() + 1); //Get the std:string's cstr and make a string out of it. Length is increased by 1 for the \0.
     }
     void WriteToConsole()
     {
@@ -184,9 +194,9 @@ public: //External Operators
     {
         return !(EqualTo(_other)); //Not equal.
     }
-    String& operator=(const String& _str)
+    void operator=(const String& _str)
     {
-        return (String&)String(_str); //Returns the String inputted as a String&.
+        vstr = _str.vstr; //Set to new string.
     }
     char& operator[](size_t _index)
     {
@@ -196,12 +206,85 @@ public: //External Operators
     {
         return CCharacterAt(_index); //Individual character.
     }
-private: //Internal Variables
-    const char* cstr;
+public: //Internal Variables
+    std::vector<char> vstr;
+    void SetVStr(const char* arr, size_t len) //Converts char array to char vector.
+    {
+        for (int i = 0; i < len; i++) //For the array length.
+        {
+            vstr.push_back(arr[i]); //Add element to vector.
+        }
+    }
 };
 #endif
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    String* s1 = new String("test", 5);
+    String* s2 = new String();
+    String* s3 = new String();
+    //(*s1).WriteToConsole();
+    int num = 0;
+
+    /*std::cout << "Length()\n";
+    std::cout << "Enter String: ";  *s1 = String::ReadFromConsole();
+    std::cout << (*s1).Length() << "\n\n";
+
+    std::cout << "CharacterAt(size_t _index)\n";
+    std::cout << "Enter String: ";  *s1 = String::ReadFromConsole();
+    std::cout << "Enter Index: "; std::cin >> num;
+    std::cout << (*s1).CharacterAt(num) << "\n\n";
+
+    std::cout << "CCharacterAt(size_t _index)\n";
+    std::cout << "Enter String: ";  *s1 = String::ReadFromConsole();
+    std::cout << "Enter Index: "; std::cin >> num;
+    std::cout << (*s1).CCharacterAt(num) << "\n\n";
+
+    std::cout << "EqualTo(const String& _other)\n";
+    std::cout << "Enter String 1: ";  *s1 = String::ReadFromConsole();
+    std::cout << "Enter String 2: ";  *s2 = String::ReadFromConsole();
+    if ((*s1).EqualTo(*s2)) { std::cout << "Strings Are Equal\n\n"; }
+    else { std::cout << "Strings Are Not Equal\n\n"; }
+
+    std::cout << "Append(const String& _str)\n";
+    std::cout << "Enter Main String: ";  *s1 = String::ReadFromConsole();
+    std::cout << "Enter String to Append: ";  *s2 = String::ReadFromConsole();
+    (*s1).Append(*s2).WriteToConsole(); std::cout << "\n\n";
+
+    std::cout << "Prepend(const String& _str)\n";
+    std::cout << "Enter Main String: ";  *s1 = String::ReadFromConsole();
+    std::cout << "Enter String to Prepend: ";  *s2 = String::ReadFromConsole();
+    (*s1).Prepend(*s2).WriteToConsole(); std::cout << "\n\n";
+
+    std::cout << "ToLower()\n";
+    std::cout << "Enter String: ";  *s1 = String::ReadFromConsole();
+    (*s1).ToLower().WriteToConsole(); std::cout << "\n\n";
+
+    std::cout << "ToUpper()\n";
+    std::cout << "Enter String: ";  *s1 = String::ReadFromConsole();
+    (*s1).ToUpper().WriteToConsole(); std::cout << "\n\n";
+
+    std::cout << "Find(const String& _str)\n";
+    std::cout << "Enter Main String: ";  *s1 = String::ReadFromConsole();
+    std::cout << "Enter Substring: ";  *s2 = String::ReadFromConsole();
+    std::cout << (*s1).Find(*s2) << "\n";
+
+    std::cout << "Find(size_t _startIndex, const String& _str)\n";
+    std::cout << "Enter Index: "; std::cin >> num;
+    std::cout << "Enter Main String: ";  *s1 = String::ReadFromConsole();
+    std::cout << "Enter Substring: ";  *s2 = String::ReadFromConsole();
+    std::cout << (*s1).Find(num, *s2) << "\n";*/
+
+    std::cout << "Replace(const String& _find, const String& _replace)\n";
+    std::cout << "Enter Main String: ";  *s1 = String::ReadFromConsole();
+    std::cout << "Enter Substring to Find & Replace: ";  *s2 = String::ReadFromConsole();
+    std::cout << "Enter Replacing Substring: ";  *s3 = String::ReadFromConsole();
+    (*s1).Replace(*s2, *s3).WriteToConsole(); std::cout << "\n\n";
+
+    //s4.Prepend(s2).Append(s3).ToUpper().WriteToConsole();
+    //std::cout << "Hello World!\n";
+
+    delete s1; s1 = nullptr;
+    delete s2; s2 = nullptr;
+    delete s3; s3 = nullptr;
 }
