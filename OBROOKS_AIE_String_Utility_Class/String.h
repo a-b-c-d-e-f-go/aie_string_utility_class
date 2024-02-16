@@ -57,18 +57,16 @@ public: //External Functions
         vstr.push_back('\0'); //Add null terminator.
         return *this; //Return this string.
     }
-    //String Prepend(const String& _str) //Adds _str to the beginning of the string. TODO: Reference Output
-    //{
-    //    size_t i = 0; //Iterator
-    //    _str.vstr.pop_back(); //Remove the null terminator.
-    //    while (_str.vstr[i] != 0) //Add appended string character by character.
-    //    {
-    //        _str.vstr.push_back(vstr[i]); //Add character i from _str.vstr to vstr.
-    //        i++;
-    //    }
-    //    _str.vstr.push_back(0); //Add null terminator.
-    //    return *this; //Return this string.
-    //}
+    String Prepend(const String& _str) //Adds _str to the beginning of the string. TODO: Reference Output
+    {
+        size_t i = 0; //Iterator
+        while (_str.CharacterAt(i) != '\0') //Add appended string character by character.
+        {
+            vstr.insert(0, _str.vstr[i]) //Add character i from _str.vstr to vstr.
+            i++;
+        }
+        return *this; //Return this string.
+    }
     const char* CStr() const //Return the const char * that is useable with std::cout. eg: std::cout << str.cstr() << std::endl;
     {
         return vstr.data(); //Returns internal variable. This way, it is encapsulated. Not sure why you would want to do this when there's an = operator that changes it anyway, but here you go.
