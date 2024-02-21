@@ -142,7 +142,7 @@ public: //External Functions
         int find_start = Find(_find); //Replaceable substring.
         if (find_start != -1) //If the replaceable substring exists.
         {
-            int find_end = find_start + _find.Length() - 1; //Position of replaceable substring plus its length (discluding the null terminator).
+            int find_end = find_start + _find.Length() - 1; //Position of replaceable substring plus its length (excluding the null terminator).
             vstr.erase(vstr.begin() + find_start, vstr.begin() + find_end); //Removes the replaceable substring.
             Insert(_replace, find_start); //Inserts the replacing substring where the replaceable substring was.
         }
