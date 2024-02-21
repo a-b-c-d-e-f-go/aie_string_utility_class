@@ -18,7 +18,13 @@ public: //External Constructors
     {
         SetVStr(_str);
     }
-    String(const String& _other) //Input is another string.
+    String(String&& _other) //Move constructor.
+    {
+        vstr = _other.vstr;
+        delete &_other; //Executes destructor ~String().
+        _other = nullptr;
+    }
+    String(const String& _other) //Copy constructor.
     {
         vstr = _other.vstr;
     }
@@ -26,7 +32,7 @@ public: //External Constructors
     {
         vstr = _str;
     }
-    ~String()
+    ~String() //Destructor.
     {
         vstr.clear(); //Remove all elements.
         vstr.shrink_to_fit(); //Free memory.
