@@ -40,15 +40,17 @@ public: //External Functions
     {
         out_of_bounds = '\0'; //Reset out of bounds char so it always returns '\0'.
         if (_index < 0 || _index >= Length()) { return out_of_bounds; } //If index is less than 0 or greater than length, return '\0'.
-        return CStr()[_index]; //Array index in the char array.
+        return vstr[_index]; //Return the character at in the char vector.
     }
     bool EqualTo(const String& _other) const //Returns true if _other contains the same characters.
     {
         return (strcmp(CStr(), _other.CStr()) == 0); //If the strcmp of both string's char arrays is 0 (and therefore the char arrays have the same contents).
     }
+
     String& Append(const String& _str) //Adds _str to the end of the string.
     {
         size_t i = 0; //Iterator
+        vstr.pop_back(); //Remove null terminator.
         while (_str.CharacterAt(i) != '\0') //Add appended string character by character until null terminator.
         {
             vstr.push_back(_str.vstr[i]); //Add character i from _str.vstr to vstr.
@@ -57,26 +59,35 @@ public: //External Functions
         vstr.push_back('\0'); //Add null terminator.
         return *this; //Return this string.
     }
-    String Prepend(const String& _str) //Adds _str to the beginning of the string. TODO: Reference Output
+    String& Insert(const String& _str, int _offset = 0) //Inserts _str at _offset in the string.
     {
-        size_t i = 0; //Iterator
-        while (_str.CharacterAt(i) != '\0') //Add appended string character by character.
+        int i = _str.Length();
+        while (i >= 0) //In reverse order, add each character of _str.vstr to the beggining of the vstr.
         {
-            vstr.insert(0, _str.vstr[i]) //Add character i from _str.vstr to vstr.
-            i++;
+            if (_str.CharacterAt(i) != '\0') //If not a null character.
+            {
+                vstr.insert(vstr.begin() + _offset, _str.vstr[i]); //Add character i from _str.vstr to the start of vstr.
+            }
+            i--;
         }
         return *this; //Return this string.
     }
+    String& Prepend(const String& _str) //Adds _str to the beginning of the string.
+    {
+        return Insert(_str, 0); //Insert at the beggining.
+    }
+
     const char* CStr() const //Return the const char * that is useable with std::cout. eg: std::cout << str.cstr() << std::endl;
     {
-        return vstr.data(); //Returns internal variable. This way, it is encapsulated. Not sure why you would want to do this when there's an = operator that changes it anyway, but here you go.
+        return vstr.data(); //Returns vstr as an array.
     }
+
     String& ToLower() //Convert all characters to lowercase.
     {
         const signed char offset = 'a' - 'A'; //Offset from capital to lowercase.
         size_t i = 0;
 
-        while (vstr[i] != 0) //Loops until the null character.
+        while (CharacterAt(i) != '\0') //Loops until the null character.
         {
             if (vstr[i] >= 'A' && vstr[i] <= 'Z') //If capital letter.
             {
@@ -91,7 +102,7 @@ public: //External Functions
         const signed char offset = 'A' - 'a'; //Offset from lowercase to capital.
         size_t i = 0;
 
-        while (vstr[i] != 0) //Loops until the null character.
+        while (CharacterAt(i) != '\0') //Loops until the null character.
         {
             if (vstr[i] >= 'a' && vstr[i] <= 'z') //If lowercase letter.
             {
@@ -101,6 +112,7 @@ public: //External Functions
         }
         return *this; //Return this string.
     }
+
     int Find(const String& _str) //Find from the entire string.
     {
         return Find(0, _str); //Effectively the same as starting at zero.
@@ -119,65 +131,50 @@ public: //External Functions
         }
         return -1; //If not found, return -1.
     }
-    /*String SingleReplace(const String& _find, const String& _replace) //Replaces only one instance. TODO: Reference Output
+    String& SingleReplace(const String& _find, const String& _replace) //Replaces only one instance of the substring. Better for performance if you already know there's only one.
     {
-        size_t find_start = Find(_find); //Get the index of the substring to replace.
-        if (find_start != -1) //If the substring to replace exists.
+        int find_start = Find(_find); //Replaceable substring.
+        if (find_start != -1) //If the replaceable substring exists.
         {
-            size_t find_end = find_start + _find.Length(); //Replaceable substring end.
-
-            const int length_offset = (int)_replace.vstr.size() - (int)_find.vstr.size(); //The size of the replacing substring minus the size of the replaced substring (how much longer/shorter the returned string will be).
-            const size_t total_length = vstr.size() + length_offset; //Final length of the returned string, given the length offset.
-            std::vector<char> newstr; //New vstr that can be modified.
-
-            for (size_t i = 0; i < find_start; i++) //Replicate the string as normal up until the replaced portion.
-            {
-                newstr.push_back(vstr[i]); //Transfer character to new vstr.
-            }
-            for (size_t i = find_start; i < find_end + length_offset - 1; i++) //For the length of the replacing substring, add its characters until complete.
-            {
-                newstr.push_back(_replace.vstr[i - find_start]); //Transfer character to new vstr.
-            }
-            for (size_t i = (find_end + length_offset - 1); i < total_length; i++) //Finally, replicate the original string as normal afterwards, skipping the replaced substring.
-            {
-                newstr.push_back(vstr[i - length_offset]); //Transfer character to new vstr.
-            }
-            return String(newstr);
+            int find_end = find_start + _find.Length() - 1; //Position of replaceable substring plus its length (discluding the null terminator).
+            vstr.erase(vstr.begin() + find_start, vstr.begin() + find_end); //Removes the replaceable substring.
+            Insert(_replace, find_start); //Inserts the replacing substring where the replaceable substring was.
         }
         return (*this);
     }
-    String Replace(const String& _find, const String& _replace) //Replaces all occurrences of _find with _replace. TODO: Reference Output
+    String& Replace(const String& _find, const String& _replace) //Replaces all occurrences of _find with _replace.
     {
-        String replaced = (*this);
-        while (replaced.SingleReplace(_find, _replace) != replaced) //TODO: Literally anything better performance-wise than this.
+        while (Find(_find) != -1) //While an instance of the replaceable substring still exists.
         {
-            replaced = replaced.SingleReplace(_find, _replace);
+            SingleReplace(_find, _replace); //Replace one instance.
         }
-        return replaced;
-    }*/
+        return (*this);
+    }
 
     static String ReadFromConsole() //Wait for input in the console window and store the result
     {
         std::string newstr; //New std:string.
-        std::getline(std::cin, newstr); //Get std:string's contents from console input. Uses #include <string>.
+        std::getline(std::cin, newstr); //Get std:string's contents from console input, including spaces. Uses #include <string>.
         return String(newstr.c_str()); //Get the std:string's cstr and make a string out of it.
     }
     const void WriteToConsole() const //Write the string to the console window.
     {
         std::cout << CStr(); //Writes the char array to the console.
     }
+
 public: //External Operators
     bool operator==(const String& _other) //Returns true if lhs == rhs.
     {
         return EqualTo(_other); //Equal.
     }
-    bool operator!=(const String& _other)
+    bool operator!=(const String& _other) //Returns true if lhs != rhs.
     {
         return !(EqualTo(_other)); //Not equal.
     }
-    void operator=(const String& _str)
+    String& operator=(const String& _str) //Replaces the characters in lhs with the characters in rhs.
     {
         vstr = _str.vstr; //Set to new string.
+        return *this;
     }
     const char& operator[](size_t _index) const //Returns the character located at position n.
     {
@@ -185,11 +182,21 @@ public: //External Operators
     }
     bool operator<(const String& _str) //Returns true if this string comes before rhs in the alphabet.
     {
-        return (strcmp(CStr(), _str.CStr()) < 0);
+        return (strcmp(CStr(), _str.CStr()) < 0); //strcmp is alphabetically before.
     }
     bool operator>(const String& _str) //Returns true if this string comes after rhs in the alphabet.
     {
-        return (strcmp(CStr(), _str.CStr()) > 0);
+        return (strcmp(CStr(), _str.CStr()) > 0); //strcmp is alphabetically after.
+    }
+    String operator+(const String& _str) //Return a new string that combines the lhs and rhs.
+    {
+        String* s = new String(*this); //Copy this string.
+        s->Append(_str); //Append the second string to the copy.
+        return *s; //Return the copy.
+    }
+    void operator+=(const String& _str) //Modifies lhs, appending rhs to lhs operands
+    {
+        Append(_str); //Literally just append the second string.
     }
 private: //Internal Variables
     std::vector<char> vstr;
@@ -202,6 +209,7 @@ private: //Internal Variables
             vstr.push_back(arr[i]); //Add element to vector.
             i++;
         }
+        vstr.push_back('\0'); //Add null terminator.
     }
     bool RecursiveFind(size_t _mainIndex, size_t _subIndex, const String& _str) //At every character, it loops through subsequent characters to see if there is a matching string.
     {
