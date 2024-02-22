@@ -12,7 +12,7 @@ using namespace std;
 // # TASK 3 #
 // ##########
 
-void log_test(String* _str, const char* _func, std::string _output, String* _p1 = nullptr, String* _p2 = nullptr, String* _p3 = nullptr)
+static void log_test(String* _str, const char* _func, std::string _output, String* _p1 = nullptr, String* _p2 = nullptr, String* _p3 = nullptr)
 {
     String test = *_str + String(".") + _func + String("(");
 
@@ -35,7 +35,7 @@ int main()
     String* s1 = new String("Hello");
     String* s2 = new String(", ");
     String* s3 = new String("World!\n\n");
-    String* sout = new String(); //Output String
+    String* sout = new String(); //Output String - Exists for methods like Append() that modify the original string, where we also need the input for logging.
 
     //For conversions into text.
     char char_out[2] = { '\0', '\0' };
@@ -109,44 +109,50 @@ int main()
     log_test(s1, "Replace", sout->Replace(*s2, *s3).CStr(), s2, s3); //Output
 
     //Testing Operators
-    /*cout << "Operator ==\n";
+    cout << "Operator ==\n";
     cout << "Enter String 1: "; set_s1; //lhs
     cout << "Enter String 2: "; set_s2; //rhs
-    if (*s1 == *s2) { cout << "Strings Are Equal\n\n"; } //Output
-    else { cout << "Strings Are Not Equal\n\n"; }
+    bool_out = "false"; //Convert boolean to string.
+    if (*sout == *s2) { bool_out = "true"; }
+    log_test(s1, "operator==", bool_out, s2); //Output
 
     cout << "Operator !=\n";
     cout << "Enter String 1: "; set_s1; //lhs
     cout << "Enter String 2: "; set_s2; //rhs
-    if (*s1 != *s2) { cout << "Strings Are Inequal\n\n"; } //Output
-    else { cout << "Strings Are Not Inequal\n\n"; }
+    bool_out = "false"; //Convert boolean to string.
+    if (*sout != *s2) { bool_out = "true"; }
+    log_test(s1, "operator!=", bool_out, s2); //Output
 
     cout << "Operator []\n";
     cout << "Enter String: "; set_s1; //String
-    cout << "Enter Index: "; cin >> num; String::ReadFromConsole(); //Within [] Brackets
-    cout << (*s1)[num] << "\n\n";
+    cout << "Enter Index: "; set_num; //Within [] Brackets
+    char_out[0] = (*sout)[num]; //Convert character to string with length of 2 including null terminator.
+    log_test(s1, "operator[]", char_out, new String(num)); //Output
 
     cout << "Operator <\n";
     cout << "Enter String 1: "; set_s1; //lhs
     cout << "Enter String 2: "; set_s2; //rhs
-    if (*s1 < *s2) { cout << "Less Than\n\n"; } //Output
-    else { cout << "Not Less Than\n\n"; }
+    bool_out = "false"; //Convert boolean to string.
+    if (*sout < *s2) { bool_out = "true"; }
+    log_test(s1, "operator<", bool_out, s2); //Output
 
     cout << "Operator >\n";
     cout << "Enter String 1: "; set_s1; //lhs
     cout << "Enter String 2: "; set_s2; //rhs
-    if (*s1 > *s2) { cout << "Greater Than\n\n"; } //Output
-    else { cout << "Not Greater Than\n\n"; }
+    bool_out = "false"; //Convert boolean to string.
+    if (*sout > *s2) { bool_out = "true"; }
+    log_test(s1, "operator>", bool_out, s2); //Output
 
     cout << "Operator +\n";
     cout << "Enter String 1: "; set_s1; //lhs
     cout << "Enter String 2: "; set_s2; //rhs
-    *s3 = *s1 + *s2; s3->WriteToConsole(); cout << "\n\n"; //Output
+    log_test(s1, "operator+", (*sout + *s2).CStr(), s2); //Output
 
     cout << "Operator +=\n";
     cout << "Enter String 1: "; set_s1; //lhs
     cout << "Enter String 2: "; set_s2; //rhs
-    *s1 += *s2; s1->WriteToConsole(); cout << "\n\n"; //Output*/
+    *sout += *s2;
+    log_test(s1, "operator+=", (*sout).CStr(), s2); //Output
 
     //Cleanup
     delete s1; s1 = nullptr;
