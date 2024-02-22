@@ -14,11 +14,23 @@ public: //External Constructors
     {
         SetVStr("");
     }
-    String(const char* _str) //Input is another cstr.
+    String(const char* _str) //Input is a cstr.
     {
         SetVStr(_str);
     }
-    String(String&& _other) //Move constructor.
+    String(std::string _str) //Input is an std::string.
+    {
+        SetVStr(_str.c_str());
+    }
+    String(std::vector<char> _str) //Input is a char vector.
+    {
+        vstr = _str;
+    }
+    String(int _num) //Input is an int.
+    {
+        SetVStr(std::to_string(_num).c_str()); //Int to std::string to cstr to char vector.
+    }
+    String(String&& _other) noexcept //Move constructor. No exceptions because of the warning in Visual Studio.
     {
         vstr = _other.vstr;
         delete &_other; //Executes destructor ~String().
@@ -27,10 +39,6 @@ public: //External Constructors
     String(const String& _other) //Copy constructor.
     {
         vstr = _other.vstr;
-    }
-    String(const std::vector<char> _str) //Input is a char vector.
-    {
-        vstr = _str;
     }
     ~String() //Destructor.
     {
