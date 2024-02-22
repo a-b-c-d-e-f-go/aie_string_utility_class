@@ -1,6 +1,10 @@
 #include <iostream>
 #include "String.h"
+#include <chrono>
+#include <fstream>
+
 using namespace std;
+using namespace std::chrono;
 
 //Inputs from console.
 #define set_s1 *s1 = String::ReadFromConsole(); *sout = *s1
@@ -12,9 +16,37 @@ using namespace std;
 // # TASK 3 #
 // ##########
 
-static void log_test(String* _str, const char* _func, std::string _output, String* _p1 = nullptr, String* _p2 = nullptr, String* _p3 = nullptr)
+string time() //https://stackoverflow.com/questions/62226043/how-to-get-the-current-time-in-c-in-a-safe-way
 {
-    String test = *_str + String(".") + _func + String("(");
+    time_t clock_now = system_clock::to_time_t(system_clock::now()); //Sets a time_t variable to the current time.
+    char buffer[30]; //Creates a buffer of chars.
+    ctime_s(buffer, sizeof(buffer), &clock_now); //Puts the current time in the char buffer as a string.
+
+    string result = buffer; //Converts the buffer to std::string.
+    result.pop_back(); //Removes the newline character to fit in the [] brackets.
+
+    return result;
+}
+
+static void write_to_log(const char* _str)
+{
+    std::fstream file;
+    file.open("log.txt", ios::app); //Append to existing text file.
+    if (!file.is_open()) { file.open("log.txt", ios::out); } //If the file does not exist, ios::app won't open it. In this case, create a new text file.
+    if (file.is_open()) //If the file isn't open now, something has gone very wrong.
+    {
+        file << _str;
+    }
+    else
+    {
+        cout << "ERROR: Cannot write to log.txt\n";
+    }
+    file.close();
+}
+
+static void log_test(String* _str, const char* _func, std::string _output, String* _p1 = nullptr, String* _p2 = nullptr, String* _p3 = nullptr) //Prints the result of a function to the console and to a text file.
+{
+    String test = *_str + String(".") + _func + String("("); //Start with function opener.
 
     if (_p1 != nullptr) { //Parameter 1
         test += *_p1;
@@ -25,7 +57,10 @@ static void log_test(String* _str, const char* _func, std::string _output, Strin
             }
         }
     }
-    test += String(") returned ") + String(_output) + "\n";
+    test += String(") returned ") + String(_output) + "\n"; //Add output and newline.
+    test.Prepend(String("] ")).Prepend(time()).Prepend(String("[")); //Add time at the start.
+    write_to_log(test.CStr());
+
     test.WriteToConsole(); std::cout << "\n";
 }
 
@@ -41,6 +76,9 @@ int main()
     char char_out[2] = { '\0', '\0' };
     std::string bool_out = "false";
     int num = 0;
+
+    //Specify new entry in log.txt
+    write_to_log("\nProgram Start\n");
 
 
     // ##########
@@ -159,4 +197,5 @@ int main()
     delete s2; s2 = nullptr;
     delete s3; s3 = nullptr;
     delete sout; sout = nullptr;
+    write_to_log("Program End\n");
 }

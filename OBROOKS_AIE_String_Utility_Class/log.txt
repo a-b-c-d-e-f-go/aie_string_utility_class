@@ -1,0 +1,47 @@
+
+Program Start
+[Thu Feb 22 15:42:01 2024] abcdefghij.Length() returned 11
+[Thu Feb 22 15:42:06 2024] abcdefg.CharacterAt(3) returned d
+[Thu Feb 22 15:42:16 2024] abcdefgh.EqualTo(abcdefgh) returned true
+[Thu Feb 22 15:42:21 2024] abc.Append(defgh) returned abcdefgh
+[Thu Feb 22 15:42:25 2024] abc.Prepend(defgh) returned defghabc
+[Thu Feb 22 15:42:32 2024] The Original Starwalker.ToLower() returned the original starwalker
+[Thu Feb 22 15:42:35 2024] The Original Starwalker.ToUpper() returned THE ORIGINAL STARWALKER
+[Thu Feb 22 15:42:48 2024] The Original Starwalker.Find(al) returned 10
+[Thu Feb 22 15:42:54 2024] The Original Starwalker.Find(14, al) returned 18
+[Thu Feb 22 15:43:05 2024] The Original Starwalker.Replace(Original, Unoriginal) returned The Unoriginal Starwalker
+[Thu Feb 22 15:43:15 2024] abcdefg.operator==(abcdefe) returned false
+[Thu Feb 22 15:43:24 2024] abcdefg.operator!=(abcdef) returned true
+[Thu Feb 22 15:43:37 2024] abcdefgh.operator[](3) returned d
+[Thu Feb 22 15:43:48 2024] aaaa.operator<(aaab) returned true
+[Thu Feb 22 15:43:55 2024] aaaa.operator>(aaab) returned false
+[Thu Feb 22 15:44:02 2024] abc.operator+(defg) returned abcdefg
+[Thu Feb 22 15:44:07 2024] abcd.operator+=(efg) returned abcdefg
+Program End
+
+Program Start
+[Thu Feb 22 15:45:27 2024] test.Length() returned 5
+
+Program Start
+[Thu Feb 22 15:51:01 2024] adsfuerisugnsg.knsfg.Length() returned 21
+[Thu Feb 22 15:51:12 2024] alui nushguilsfgsjgnlufg s.CharacterAt(12) returned l
+[Thu Feb 22 15:51:19 2024] oirjfgosgs;jgf.EqualTo(sdjlfngfsjg) returned false
+[Thu Feb 22 15:51:26 2024] sfdguilsg.Append( fnsdlgkjf ndsgujlfdn) returned sfdguilsg fnsdlgkjf ndsgujlfdn
+[Thu Feb 22 15:51:33 2024] klsjdfgis;og.Prepend(solgns;fg;jfdi) returned solgns;fg;jfdiklsjdfgis;og
+[Thu Feb 22 15:51:42 2024] NJLJBKJKJHkjbjhb,kbdfa...?.ToLower() returned njljbkjkjhkjbjhb,kbdfa...?
+[Thu Feb 22 15:51:49 2024] HKBH b<HBk,JHNB L<NJlkjhjlhnjkHBKJbk.ToUpper() returned HKBH B<HBK,JHNB L<NJLKJHJLHNJKHBKJBK
+[Thu Feb 22 15:52:00 2024] jlkasnfguslsdfnjugldsfgsfdngsfdljg.Find(dfg) returned -1
+[Thu Feb 22 15:52:14 2024] skj;fgjksfjg;fskjg;fsjg;fsdgsdfgrgewqlutnjlnui.Find(10, njl) returned 40
+[Thu Feb 22 15:52:37 2024] ualngjnsgkljfdngsngfisgnjfsd;gjfskgjfs;g.Replace(f, NEVER GONNA GIVE YOU UP) returned ualngjnsgkljNEVER GONNA GIVE YOU UPdngsngNEVER GONNA GIVE YOU UPisgnjNEVER GONNA GIVE YOU UPsd;gjNEVER GONNA GIVE YOU UPskgjNEVER GONNA GIVE YOU UPs;g
+[Thu Feb 22 15:53:19 2024] huilwehfuilhguilrg'.operator==(skhdfsdgjsfg) returned false
+[Thu Feb 22 15:53:23 2024] shfdlgkjhsluris.operator!=(sfbgkfsggrew) returned true
+[Thu Feb 22 15:53:30 2024] skjhfglkhsuipw.operator[](6) returned l
+[Thu Feb 22 15:53:37 2024] kl;smf;digjoisjgo;sigjs.operator<(akjfdgbakglfs) returned false
+[Thu Feb 22 15:53:41 2024] sljhurgsfklgu.operator>(srughisulhglnjklsl) returned false
+[Thu Feb 22 15:53:45 2024] ajkldsfjad;f.operator+(sfhjglkfsdgjsgur) returned ajkldsfjad;fsfhjglkfsdgjsgur
+[Thu Feb 22 15:53:49 2024] jskldfsg.operator+=(sfkgjfdsnglsjlkg) returned jskldfsgsfkgjfdsnglsjlkg
+Program End
+
+Program Start
+[Thu Feb 22 15:55:57 2024] aaaaaaaaa.Length() returned 10
+[Thu Feb 22 15:56:25 2024] This program is going to end prematurely because I'm about to close the console..CharacterAt(5) returned p
